@@ -1,17 +1,20 @@
 package com.example.android.pets;
 
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.pets.data.PetContract.PetEntry;
@@ -31,7 +34,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     setContentView(R.layout.activity_catalog);
 
     // Setup FAB to open EditorActivity
-    FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+    FloatingActionButton fab = findViewById(R.id.fab);
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -40,12 +43,22 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
       }
     });
 
-    ListView displayView = (ListView) findViewById(R.id.pet_list_view);
+    ListView displayView = findViewById(R.id.pet_list_view);
     View emptyView = findViewById(R.id.empty_view);
     displayView.setEmptyView(emptyView);
 
     petCursorAdapter = new PetCursorAdapter(this, null);
     displayView.setAdapter(petCursorAdapter);
+
+    displayView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+        Uri petUri = ContentUris.withAppendedId(PetEntry.CONTENT_URI, id);
+        intent.setData(petUri);
+        startActivity(intent);
+      }
+    });
 
     getLoaderManager().initLoader(PET_LOADER, null, this);
   }

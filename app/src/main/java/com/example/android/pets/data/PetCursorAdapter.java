@@ -2,6 +2,7 @@ package com.example.android.pets.data;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,11 +56,15 @@ public class PetCursorAdapter extends CursorAdapter {
    */
   @Override
   public void bindView(View view, Context context, Cursor cursor) {
-    TextView nameTextView = (TextView) view.findViewById(R.id.name);
-    TextView breedTextView = (TextView) view.findViewById(R.id.breed);
+    TextView nameTextView = view.findViewById(R.id.name);
+    TextView breedTextView = view.findViewById(R.id.breed);
 
     String name = cursor.getString(cursor.getColumnIndexOrThrow(PetEntry.COLUMN_PET_NAME));
     String breed = cursor.getString(cursor.getColumnIndexOrThrow(PetEntry.COLUMN_PET_BREED));
+
+    if (TextUtils.isEmpty(breed)){
+      breedTextView.setText(R.string.unknown_breed);
+    }
 
     nameTextView.setText(name);
     breedTextView.setText(breed);
